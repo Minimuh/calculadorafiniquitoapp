@@ -51,9 +51,6 @@ function Layout({ children }: { children: React.ReactNode }) {
               <Link to="/privacidad" className="hover:text-primary transition-colors">
                 Privacidad
               </Link>
-              <a href="mailto:contacto@calculadora-finiquito.es" className="hover:text-primary transition-colors">
-                Contacto
-              </a>
             </nav>
           </div>
           <p className="text-xs text-muted-foreground/70 text-center mt-4">
