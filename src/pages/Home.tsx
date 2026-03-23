@@ -1,5 +1,5 @@
 import { FiniquitoCalculator } from "@/components/finiquito-calculator"
-import { AdSidebar } from "@/components/ad-sidebar"
+import { ContentSidebar } from "@/components/content-sidebar"
 import { InfoSection } from "@/components/info-section"
 
 export function Home() {
@@ -9,7 +9,7 @@ export function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center">
           {/* Left Ad Sidebar */}
-          <AdSidebar position="left" />
+          <ContentSidebar position="left" />
 
           {/* Main Content */}
           <main className="w-full max-w-2xl">
@@ -36,7 +36,7 @@ export function Home() {
 
              {/* Bottom Ad Banner - Mobile */}
             <div className="mt-8 xl:hidden">
-              <div className="ad-placeholder flex items-center justify-center rounded-lg min-h-[100px]">
+              <div className="content-placeholder flex items-center justify-center rounded-lg min-h-[100px]">
                 <div className="text-center p-4">
                   <p className="text-muted-foreground text-xs mb-1">Publicidad</p>
                   <p className="text-[10px] text-muted-foreground/70">{"Banner 320x100"}</p>
@@ -49,7 +49,7 @@ export function Home() {
 
             {/* Bottom Ad Banner - Mobile */}
             <div className="mt-8 xl:hidden">
-              <div className="ad-placeholder flex items-center justify-center rounded-lg min-h-[100px]">
+              <div className="content-placeholder flex items-center justify-center rounded-lg min-h-[100px]">
                 <div className="text-center p-4">
                   <p className="text-muted-foreground text-xs mb-1">Publicidad</p>
                   <p className="text-[10px] text-muted-foreground/70">{"Banner 320x100"}</p>
@@ -59,7 +59,7 @@ export function Home() {
           </main>
 
           {/* Right Ad Sidebar */}
-          <AdSidebar position="right" />
+          <ContentSidebar position="right" />
         </div>
       </div>
     </>

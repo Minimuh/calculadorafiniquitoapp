@@ -57,7 +57,7 @@ export function AdModal({ isOpen, onClose }: AdModalProps) {
         </DialogHeader>
         <div className="p-4">
           {/* Espacio para Google Ads - Banner 300x250 */}
-          <div className="ad-placeholder flex items-center justify-center rounded-lg min-h-[250px]">
+          <div className="content-placeholder flex items-center justify-center rounded-lg min-h-[250px]">
             <div className="text-center p-6">
               <p className="text-muted-foreground text-sm mb-2">Espacio publicitario</p>
               <p className="text-xs text-muted-foreground/70">Google Ads 300x250</p>
@@ -65,9 +65,9 @@ export function AdModal({ isOpen, onClose }: AdModalProps) {
                 Para integrar Google Ads, reemplaza este div con:
                 <ins className="adsbygoogle"
                   style={{ display: 'block' }}
-                  data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                  data-ad-slot="XXXXXXXXXX"
-                  data-ad-format="rectangle"
+                  data-content-client="ca-pub-XXXXXXXXXXXXXXXX"
+                  data-content-slot="XXXXXXXXXX"
+                  data-content-format="rectangle"
                 />
               */}
             </div>
