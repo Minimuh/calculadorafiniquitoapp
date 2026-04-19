@@ -35,7 +35,7 @@ export function AdModal({ isOpen, onClose }: AdModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={() => canClose && onClose()}>
-      <DialogContent className="sm:max-w-lg bg-card border-border/50 p-0 overflow-hidden">
+      <DialogContent showCloseButton={false} className="sm:max-w-lg bg-card border-border/50 p-0 overflow-hidden">
         <DialogHeader className="p-4 pb-2 border-b border-border/30">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-sm text-muted-foreground">Publicidad</DialogTitle>

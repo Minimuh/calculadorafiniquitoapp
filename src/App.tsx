@@ -3,6 +3,7 @@ import { Calculator, FileText, Shield } from "lucide-react"
 import { Home } from "./pages/Home"
 import { AvisoLegal } from "./pages/AvisoLegal"
 import { Privacidad } from "./pages/Privacidad"
+import { ScrollToTop } from "@/components/ScrollToTop"
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -54,7 +55,7 @@ function Layout({ children }: { children: React.ReactNode }) {
             </nav>
           </div>
           <p className="text-xs text-muted-foreground/70 text-center mt-4">
-            Esta calculadora es orientativa y no constituye asesoramiento legal. 
+            Esta calculadora es orientativa y no constituye asesoramiento legal.
             Para casos específicos, consulta con un profesional.
           </p>
         </div>
@@ -66,6 +67,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Calculator, Calendar, Euro, Briefcase, Info, Sparkles } from "lucide-react"
+import { Calculator, Calendar, Euro, Info, Sparkles } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -43,7 +43,7 @@ export function FiniquitoCalculator() {
     tipoPagas: "14",
     ultimaPagaExtra: "",
   })
-  
+
   const [showAdModal, setShowAdModal] = useState(false)
   const [resultado, setResultado] = useState<Resultado | null>(null)
   const [showResults, setShowResults] = useState(false)
@@ -54,82 +54,75 @@ export function FiniquitoCalculator() {
     setResultado(null)
   }
 
-  const calcularFiniquito = () => {
-    const salarioBruto = parseFloat(formData.salarioBrutoMensual) || 0
+  const calcularFiniquito = (): Resultado | null => {
+    const salarioMensual = parseFloat(formData.salarioBrutoMensual) || 0
     const fechaInicio = new Date(formData.fechaInicio)
     const fechaFin = new Date(formData.fechaFin)
     const diasVacacionesAnuales = parseInt(formData.diasVacacionesAnuales) || 30
-    const diasVacacionesDisfrutados = parseInt(formData.diasVacacionesDisfrutados) || 0
+    const diasDisfrutados = parseInt(formData.diasVacacionesDisfrutados) || 0
 
-    if (!salarioBruto || !formData.fechaInicio || !formData.fechaFin) {
-      return null
-    }
+    if (!salarioMensual || !formData.fechaInicio || !formData.fechaFin) return null
 
-    // Salario diario (dividido entre 30 días)
-    const salarioDiario = salarioBruto / 30
+    // 🔹 Salario anual
+    const salarioAnual =
+      salarioMensual * (formData.tipoPagas === "14" ? 14 : 12)
 
-    // Días trabajados en el último mes
-    const ultimoDiaMes = new Date(fechaFin.getFullYear(), fechaFin.getMonth() + 1, 0).getDate()
-    const diaDelMes = fechaFin.getDate()
-    const diasTrabajadosUltimoMes = diaDelMes
+    const salarioDiario = salarioAnual / 365
 
-    // Salario pendiente del último mes
-    const salarioPendiente = salarioDiario * diasTrabajadosUltimoMes
-
-    // Cálculo de vacaciones no disfrutadas
+    // 🔹 Vacaciones SOLO del año actual (o desde inicio si es el mismo año)
     const inicioAno = new Date(fechaFin.getFullYear(), 0, 1)
-    const diasDelAnoTrabajados = Math.floor((fechaFin.getTime() - inicioAno.getTime()) / (1000 * 60 * 60 * 24)) + 1
-    const vacacionesGeneradas = (diasDelAnoTrabajados / 365) * diasVacacionesAnuales
-    const diasVacacionesPendientes = Math.max(0, vacacionesGeneradas - diasVacacionesDisfrutados)
-    const vacacionesNoDisfrutadas = diasVacacionesPendientes * salarioDiario
 
-    // Cálculo de pagas extraordinarias proporcionales
-    let pagasExtrasProporcionales = 0
+    // Si empezó este año, usar fechaInicio
+    const inicioPeriodo =
+      fechaInicio > inicioAno ? fechaInicio : inicioAno
+
+    const diasTrabajadosAno =
+      Math.floor((fechaFin.getTime() - inicioPeriodo.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
+    const vacacionesGeneradas =
+      (diasTrabajadosAno / 365) * diasVacacionesAnuales
+
+    const diasVacacionesPendientes = Math.max(
+      0,
+      Number((vacacionesGeneradas - diasDisfrutados).toFixed(2))
+    )
+
+    const vacacionesNoDisfrutadas =
+      diasVacacionesPendientes * salarioDiario
+
+    // 🔹 Días trabajados último mes
+    const inicioMes = new Date(fechaFin.getFullYear(), fechaFin.getMonth(), 1)
+
+    const diasTrabajadosUltimoMes =
+      Math.floor((fechaFin.getTime() - inicioMes.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
+    const salarioPendiente = diasTrabajadosUltimoMes * salarioDiario
+
+    // 🔹 Pagas extra
+    let pagasExtras = 0
     let mesesPagaExtra = 0
 
-    if (formData.tipoPagas === "14") {
-      // Paga de verano (generalmente se cobra en junio, se genera desde enero)
-      // Paga de Navidad (generalmente se cobra en diciembre, se genera desde julio)
-      const mesActual = fechaFin.getMonth() + 1 // 1-12
-      
-      // Meses trabajados para la paga de verano (enero a junio)
-      let mesesPagaVerano = 0
-      if (mesActual <= 6) {
-        mesesPagaVerano = mesActual
-      }
-      
-      // Meses trabajados para la paga de Navidad (julio a diciembre)
-      let mesesPagaNavidad = 0
-      if (mesActual > 6) {
-        mesesPagaNavidad = mesActual - 6
-      }
-      
-      // Si la última paga extra fue en cierta fecha, ajustamos
-      if (formData.ultimaPagaExtra) {
-        const ultimaPaga = new Date(formData.ultimaPagaExtra)
-        const mesPaga = ultimaPaga.getMonth() + 1
-        
-        if (mesPaga <= 6 && mesActual <= 6) {
-          // Ya cobró la paga de verano
-          mesesPagaVerano = 0
-        } else if (mesPaga > 6 && mesActual > 6) {
-          // Ya cobró la paga de Navidad
-          mesesPagaNavidad = mesActual - mesPaga
-        }
-      }
-      
-      mesesPagaExtra = mesesPagaVerano + mesesPagaNavidad
-      
-      // Cada paga extra es un salario mensual, proporcional a 6 meses
-      pagasExtrasProporcionales = (salarioBruto / 6) * mesesPagaExtra
+    if (formData.tipoPagas === "14" && formData.ultimaPagaExtra) {
+      const ultimaPaga = new Date(formData.ultimaPagaExtra)
+
+      const diasDesdeUltimaPaga =
+        Math.floor((fechaFin.getTime() - ultimaPaga.getTime()) / (1000 * 60 * 60 * 24))
+
+      mesesPagaExtra = diasDesdeUltimaPaga / 30
+
+      const proporcion = diasDesdeUltimaPaga / 180
+      pagasExtras = salarioMensual * proporcion
     }
 
-    const total = salarioPendiente + vacacionesNoDisfrutadas + pagasExtrasProporcionales
+    const total =
+      salarioPendiente +
+      vacacionesNoDisfrutadas +
+      pagasExtras
 
     return {
       salarioPendiente,
       vacacionesNoDisfrutadas,
-      pagasExtrasProporcionales,
+      pagasExtrasProporcionales: pagasExtras,
       total,
       detalles: {
         diasTrabajadosUltimoMes,
